@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="mine_svip_fee_begin_color_01">#FFEBAD94</color>
+    <color name="mine_svip_fee_end_color_01">#FFF7C3B1</color>
+    <color name="mine_svip_text_color">#FF9A7549</color>
+    <color name="vip_gloden_begin">#E8D7Ac</color>
+    <color name="vip_gloden_end">#CCA872</color>
+    <color name="mine_svip_divider_color_gold">#40A06756</color>
+    <color name="mine_svip_fee_begin_color">#FFF8E5C3</color>
+    <color name="mine_svip_fee_end_color">#FFFFF3E1</color>
+    <color name="mine_svip_text_color65">#A69A7549</color>
+</resources>
