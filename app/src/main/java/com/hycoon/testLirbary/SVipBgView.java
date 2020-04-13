@@ -11,14 +11,12 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -33,8 +31,6 @@ import androidx.core.content.ContextCompat;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**
@@ -148,6 +144,7 @@ public class SVipBgView extends View {
     private Rect mArrowRect;
     private OnSubmitClickLisenter mOnSubmitClickLisenter;
     private OnScrollClickLisenter mOnScrollClickLisenter;
+    private int offsetY;
 
     public interface  OnSubmitClickLisenter{
         void onClick();
@@ -349,8 +346,9 @@ public class SVipBgView extends View {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         } else {
             int width = MeasureSpec.getSize(widthMeasureSpec);
+            offsetY = mFontMetricsInt.descent - mFontMetricsInt.ascent;
             mCurStrStartY = mDp10 + mHeight/2 + (mFontMetricsInt.descent - mFontMetricsInt.ascent)/2 - mFontMetricsInt.descent ;
-            mNextStrStarY = mDp10 + mHeight/2 + (mFontMetricsInt.descent - mFontMetricsInt.ascent)/2 - mFontMetricsInt.descent + mHeight/6;
+            mNextStrStarY = mDp10 + mHeight/2 + (mFontMetricsInt.descent - mFontMetricsInt.ascent)/2 - mFontMetricsInt.descent + offsetY;
             mCurStrAnimStartY = mCurStrStartY;
             mNextStrAnimStartY = mNextStrStarY;
             setMeasuredDimension(width, mHeight);
@@ -416,17 +414,17 @@ public class SVipBgView extends View {
             return;
         }
         canvas.save();
-        canvas.translate(mDp35  ,mAutoTextStartY);
+        canvas.translate(mDp35 ,mAutoTextStartY);
         String curStr = getCuStr();
         if (!TextUtils.isEmpty(curStr)) {
             canvas.drawText(curStr, 0, curStr.length(), 0, mCurStrAnimStartY - mAutoTextStartY, mCurPaint);
-            canvas.drawBitmap(mArrowBitmap,mCurPaint.measureText(curStr),mCurStrAnimStartY - mAutoTextStartY- mDp10,mCurArrPaint);
+            canvas.drawBitmap(mArrowBitmap,mCurPaint.measureText(curStr) + mDp1,mCurStrAnimStartY - mAutoTextStartY- mDp10 ,mCurArrPaint);
         }
 
         String nexStr = getNexStr();
         if (!TextUtils.isEmpty(nexStr) && mIsAnimationing) {
             canvas.drawText(nexStr, 0, nexStr.length(), 0, mNextStrAnimStartY  - mAutoTextStartY, mNexPaint);
-            canvas.drawBitmap(mArrowBitmap, mNexPaint.measureText(nexStr) ,(int)mNextStrAnimStartY  - mAutoTextStartY - mDp10,mNextArrPaint);
+            canvas.drawBitmap(mArrowBitmap, mNexPaint.measureText(nexStr) + mDp1 ,(int)mNextStrAnimStartY  - mAutoTextStartY - mDp10 ,mNextArrPaint);
         }
         canvas.restore();
 
@@ -459,7 +457,9 @@ public class SVipBgView extends View {
         if (TextUtils.isEmpty(string)) {
             return string;
         }
-        int breakIndex = mTextPaint.breakText(string, true, (int) introWidth, null);
+
+        introWidth = mButtonStartX - mDp8 * 2 - (int)lineBeginX ;
+        int breakIndex = mTextPaint.breakText(string, true,  introWidth, null);
         boolean hasCut = false;
         while (breakIndex < string.length()){
             hasCut = true;
@@ -748,8 +748,8 @@ public class SVipBgView extends View {
             }
             mCurStrAnimStartY = mCurStrStartY;
             mNextStrAnimStartY = mNextStrStarY;
-            mCurStrAnimStartY -= mHeight / 6 * interpolatedTime;
-            mNextStrAnimStartY -= mHeight / 6 * interpolatedTime;
+            mCurStrAnimStartY -= offsetY * interpolatedTime;
+            mNextStrAnimStartY -= offsetY * interpolatedTime;
             if(1-interpolatedTime * 3 > 0){
                 mCurPaint.setAlpha((int) ((1-interpolatedTime* 3) * (mAlapha)));
                 mCurArrPaint.setAlpha((int) ((1-interpolatedTime * 3) * (mArrAlapha)));
@@ -757,9 +757,9 @@ public class SVipBgView extends View {
                 mCurPaint.setAlpha(0);
                 mCurArrPaint.setAlpha(0);
             }
-
-            mNexPaint.setAlpha((int) ((interpolatedTime) * mAlapha));
+            mNexPaint.setAlpha((int) ((interpolatedTime ) * mAlapha));
             mNextArrPaint.setAlpha((int) ((interpolatedTime) * mArrAlapha));
+
             invalidate();
         }
     }
